@@ -1,0 +1,17 @@
+<%- |  
+Hash $phs,
+$ipv4_address
+| -%>
+#
+# File managed by puppet
+#
+PIHOLE_INTERFACE=<%= $phs['interface'] %>
+IPV4_ADDRESS=<%= $ipv4_address %>
+IPV6_ADDRESS=
+PIHOLE_DNS_1=<%= $phs['dns']['primary'] %>
+PIHOLE_DNS_2=<%= $phs['dns']['secondary'] %>
+QUERY_LOGGING=<%= $phs['query_logging'] %>
+INSTALL_WEB_SERVER=<%= $phs['install']['web_server'] %>
+INSTALL_WEB_SERVER=<%= $phs['install']['web_interface'] %>
+LIGHTTPD_ENABLED=<%= $phs['lighttpd_enable'] %>
+WEBPASSWORD=<%= $phs['webpassword'] %>
