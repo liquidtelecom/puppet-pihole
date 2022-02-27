@@ -110,7 +110,7 @@ class pihole::install {
       path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
       command => "pihole --white-wild ${ww} --comment 'Added by Puppet'",
       user    => 'root',
-      onlyif  => "pihole --white-wild --list | grep -F ${ww}",
+      unless  => "pihole --white-wild --list | grep -F ${ww}",
       notify  => Exec['Update Pihole'],
     }
   }
