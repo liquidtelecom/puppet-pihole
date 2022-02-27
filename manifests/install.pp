@@ -6,6 +6,7 @@ class pihole::install {
   # VARIABLES
   $phi = lookup('pihole::install')    # Installation parameters
   $phs = lookup('pihole::setup')      # Setup variables
+  $phf = lookup('pihole::ftldns')     # FTLDNS configuration
 
   # Network Interface
   $netmask_cidr = extlib::netmask_to_cidr($::netmask)
@@ -36,8 +37,9 @@ class pihole::install {
     owner  => 'pihole',
     mode   => '0755',
   }
-  file { "${phi['path']['config']}/setupVars.conf" :
+  file { 'pihole setupVars' :
     ensure  => present,
+    path    => "${phi['path']['config']}/setupVars.conf",
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
@@ -48,6 +50,14 @@ class pihole::install {
         }
       ),
     require => File[ $phi['path']['config'] ],
+  }
+
+  # FTLDNS Update pihole-FTL.conf onfiguration file
+  $phf.each | String $k, String $v | {
+    file_line { $k:
+      path => "${phi['path']['config']}/setupVars.conf",
+      line => "${k}=${v}",
+    }
   }
 
   # Install pihole
@@ -65,16 +75,18 @@ class pihole::install {
     creates     => '/usr/local/bin/pihole',
     require     => [
         Vcsrepo[ $phi['path']['download'] ],
-        File[ "${phi['path']['config']}/setupVars.conf" ],
+        File[ 'pihole setupVars' ],
         ],
   }
 
-  # Update pihole upon config changes
+  # Restart pihole upon configuration changes
   exec { 'Update Pihole':
     path        => ['/bin/', '/usr/bin', '/usr/local/bin/'],
     command     => 'pihole -g',
     user        => 'root',
-    subscribe   => File[ "${phi['path']['config']}/setupVars.conf" ],
+    subscribe   => File[ 'pihole setupVars' ],
     refreshonly => true,
   }
+
+  # Restart FTLDNS upon configuration change
 }
