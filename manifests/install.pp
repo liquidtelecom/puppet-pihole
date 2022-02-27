@@ -39,6 +39,7 @@ class pihole::install {
   }
   file { 'pihole setupVars' :
     ensure  => present,
+    replace => false, # Do not overwrite changes
     path    => "${phi['path']['config']}/setupVars.conf",
     owner   => 'root',
     group   => 'root',
