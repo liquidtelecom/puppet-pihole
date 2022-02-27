@@ -8,7 +8,7 @@ class pihole::install {
   $phs = lookup('pihole::setup')      # Setup variables
   $phf = lookup('pihole::ftldns')     # FTLDNS configuration
   $phl = lookup('pihole::list')       # White- and black-lists
-  
+
 
   # Network Interface
   $netmask_cidr = extlib::netmask_to_cidr($::netmask)
@@ -106,7 +106,27 @@ class pihole::install {
 
   # White and Black Listing
   $phl['white-wild'].each | String $ww | {
-    notify{$ww:}
+    exec {'White Wild':
+    path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
+    command => [
+        'pihole',
+        '--white-wild',
+        $ww,
+        '--comment',
+        'Added by Puppet',
+    ],
+    user    => 'root',
+    onlyif  => [
+        'pihole',
+        '--white-wild',
+        '--list',
+        '|',
+        'grep',
+        '-F',
+        $ww,
+    ],
+    notify  => Exec['Update Pihole']
+    }
   }
 
 }
