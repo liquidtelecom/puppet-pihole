@@ -107,25 +107,25 @@ class pihole::install {
   # White and Black Listing
   $phl['white-wild'].each | String $ww | {
     exec {'White Wild':
-    path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
-    command => [
-        'pihole',
-        '--white-wild',
-        $ww,
-        '--comment',
-        'Added by Puppet',
-    ],
-    user    => 'root',
-    onlyif  => [
-        'pihole',
-        '--white-wild',
-        '--list',
-        '|',
-        'grep',
-        '-F',
-        $ww,
-    ],
-    notify  => Exec['Update Pihole']
+      path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
+      command => [
+          'pihole',
+          '--white-wild',
+          $ww,
+          '--comment',
+          'Added by Puppet',
+          ],
+      user    => 'root',
+      onlyif  => [
+          'pihole',
+          '--white-wild',
+          '--list',
+          '|',
+          'grep',
+          '-F',
+          $ww,
+        ],
+      notify  => Exec['Update Pihole'],
     }
   }
 
