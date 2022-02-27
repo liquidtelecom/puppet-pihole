@@ -106,7 +106,7 @@ class pihole::install {
 
   # White and Black Listing
   $phl['white-wild'].each | String $ww | {
-    exec {'White Wild':
+    exec {"White Wildcard ${ww}":
       path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
       command => [
           'pihole',
