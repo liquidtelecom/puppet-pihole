@@ -7,6 +7,8 @@ class pihole::install {
   $phi = lookup('pihole::install')    # Installation parameters
   $phs = lookup('pihole::setup')      # Setup variables
   $phf = lookup('pihole::ftldns')     # FTLDNS configuration
+  $phl = lookup('pihole::list')       # White- and black-lists
+  
 
   # Network Interface
   $netmask_cidr = extlib::netmask_to_cidr($::netmask)
@@ -100,6 +102,11 @@ class pihole::install {
     command     => 'pkill -SIGRTMIN+0 pihole-FTL',
     user        => 'root',
     refreshonly => true,
+  }
+
+  # White and Black Listing
+  $phl['white-wild'].each | String $ww | {
+    notify{$ww:}
   }
 
 }
