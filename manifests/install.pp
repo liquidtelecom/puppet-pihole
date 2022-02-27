@@ -62,6 +62,7 @@ class pihole::install {
       replace            => true,
       append_on_no_match => true,
       require            => File[ $phi['path']['config'] ],
+      notify             => Exec['Sighup piholeFTL']
     }
   }
 
@@ -94,4 +95,11 @@ class pihole::install {
   }
 
   # Restart FTLDNS upon configuration change
+  exec { 'Sighup piholeFTL':
+    path        => ['/bin/', '/usr/bin', '/usr/local/bin/'],
+    command     => 'pkill -SIGRTMIN+0 pihole-FTL',
+    user        => 'root',
+    refreshonly => true,
+  }
+
 }
