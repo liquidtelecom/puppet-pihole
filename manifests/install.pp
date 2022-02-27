@@ -35,7 +35,7 @@ class pihole::install {
     ensure => directory,
     group  => 'pihole',
     owner  => 'pihole',
-    mode   => '0755',
+    mode   => '0775',
   }
   file { 'pihole setupVars' :
     ensure  => present,
@@ -55,8 +55,11 @@ class pihole::install {
   # FTLDNS Update pihole-FTL.conf onfiguration file
   $phf.each | String $k, String $v | {
     file_line { $k:
-      path => "${phi['path']['config']}/setupVars.conf",
-      line => "${k}=${v}",
+      path               => "${phi['path']['config']}/pihole-FTL.conf",
+      line               => "${k}=${v}",
+      multiple           => false, # Should only be one instance of a variable
+      replace            => true,
+      append_on_no_match => true,
     }
   }
 
