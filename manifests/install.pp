@@ -108,23 +108,9 @@ class pihole::install {
   $phl['white-wild'].each | String $ww | {
     exec {"White Wildcard ${ww}":
       path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
-      command => [
-          'pihole',
-          '--white-wild',
-          $ww,
-          '--comment',
-          'Added by Puppet',
-          ],
+      command => "pihole --white-wild ${ww} --comment 'Added by Puppet'",
       user    => 'root',
-      onlyif  => [
-          'pihole',
-          '--white-wild',
-          '--list',
-          '|',
-          'grep',
-          '-F',
-          $ww,
-        ],
+      onlyif  => "pihole --white-wild --list | grep -F ${ww}",
       notify  => Exec['Update Pihole'],
     }
   }
