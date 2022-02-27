@@ -61,7 +61,7 @@ class pihole::install {
       multiple           => false, # Should only be one instance of a variable
       replace            => true,
       append_on_no_match => true,
-      require            => File[ $phi['path']['config'] ],
+      require            => Exec['Install Pihole'],
       notify             => Exec['Sighup piholeFTL']
     }
   }
