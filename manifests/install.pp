@@ -116,7 +116,7 @@ notify{$wwgrep:}
 
     exec {"White Wildcard ${ww}":
       path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
-      command => "pihole --white-wild '${ww}' --comment 'Added by Puppet'",
+      command => "pihole --white-wild '${ww}' --comment 'Managed by Puppet'",
       user    => 'root',
       unless  => "pihole --white-wild --list | grep -F '${wwgrep}'",
       notify  => Exec['Update Pihole'],
