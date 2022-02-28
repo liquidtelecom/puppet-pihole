@@ -119,6 +119,7 @@ class pihole::install {
       user    => 'root',
       unless  => "pihole --white-wild --list | grep -F '${wwgrep}'",
       notify  => Exec['Update Pihole'],
+      require => Exec['Install Pihole'],
     }
   }
 
