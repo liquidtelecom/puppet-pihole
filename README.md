@@ -45,3 +45,9 @@ pihole::list:
   whitelist: # Whitelist domains (no regex)
     - 'api-2-0.spot.im'   # WSJ comments enable
 ```
+
+## Dependencies
+
+* puppet stdlibs
+* vcsrepo
+* puppet accounts

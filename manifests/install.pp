@@ -67,7 +67,7 @@ class pihole::install {
       multiple           => false, # Should only be one instance of a variable
       replace            => true,
       append_on_no_match => true,
-      require            => File[ $phi['path']['config'] ],
+      require            => File[ 'preseed setupVars' ],
       notify             => Exec['Update Pihole']
     }
   }
@@ -108,7 +108,6 @@ class pihole::install {
     path        => ['/bin/', '/usr/bin', '/usr/local/bin/'],
     command     => 'pihole -g',
     user        => 'root',
-    subscribe   => File[ 'preseed setupVars' ],
     refreshonly => true,
   }
 
@@ -124,7 +123,7 @@ class pihole::install {
   # For each type of list defined in pihole::list: yaml data structure
   $phl.each | String $list_name, Array $list_domain | {     # $list_name: pihole white/black list name such as 'white-wild'
                                                             # $list_domain: array of domain names or regex expressions
-    # For each domain name within the list
+    # For each domain name within this list
     $phl[$list_name].each | Integer $index, String $dom | { # $integer: array index
                                                             # $dom: domain/regex value in array
 
@@ -140,12 +139,12 @@ class pihole::install {
         'blacklist':  # Blacklist domain
             { fail("NOT IMPLEMENTED '${list_name}'")
               # Pihole command line directive
-              $option = '--white-wild'
+              $option = '-b'
             }
         'white-regex':# Whitelist domain as regex
             { fail("NOT IMPLEMENTED '${list_name}'")
               # Pihole command line directive
-              $option = '--white-wild'
+              $option = '--white-regex'
             }
         'white-wild': # Whitelist domain with wildcard subdomains
             {
@@ -159,12 +158,12 @@ class pihole::install {
         'black-regex':# Blacklist domain as regex
             { fail("NOT IMPLEMENTED '${list_name}'")
               # Pihole command line directive
-              $option = '--white-wild'
+              $option = '--regex'
             }
         'black-wild': # Blacklist domain with wildcard subdomains
             { fail("NOT IMPLEMENTED '${list_name}'")
               # Pihole command line directive
-              $option = '--white-wild'
+              $option = '--wild'
             }
         default:
             { fail("Hiera 'pihole::list' data does not contain array name ${list_name}") }
