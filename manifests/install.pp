@@ -106,11 +106,19 @@ class pihole::install {
 
   # White and Black Listing
   $phl['white-wild'].each | String $ww | {
+    # Form regex version
+    $ww_escape = regexpescape($ww)
+    # Grep search string to prefix white-wild string
+    $wwgrep = "(\.|^)${ww_escape}"
+
+notify{$ww_escape:}
+notify{$wwgrep:}
+
     exec {"White Wildcard ${ww}":
       path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
-      command => "pihole --white-wild ${ww} --comment 'Added by Puppet'",
+      command => "pihole --white-wild '${ww}' --comment 'Added by Puppet'",
       user    => 'root',
-      unless  => "pihole --white-wild --list | grep -F ${ww}",
+      unless  => "pihole --white-wild --list | grep -F '${wwgrep}'",
       notify  => Exec['Update Pihole'],
     }
   }
