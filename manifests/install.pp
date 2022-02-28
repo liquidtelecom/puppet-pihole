@@ -121,9 +121,10 @@ class pihole::install {
   }
 
   # White and Black Listing
+  # For each type of list defined in pihole::list: yaml data structure
   $phl.each | String $list_name, Array $list_domain | {     # $list_name: pihole white/black list name such as 'white-wild'
                                                             # $list_domain: array of domain names or regex expressions
-
+    # For each domain name within the list
     $phl[$list_name].each | Integer $index, String $dom | { # $integer: array index
                                                             # $dom: domain/regex value in array
 
@@ -135,7 +136,6 @@ class pihole::install {
               $dom_grep = $dom
               # Pihole command line directive
               $option = '-w'
-
             }
         'blacklist':  # Blacklist domain
             { fail("NOT IMPLEMENTED '${list_name}'")
@@ -168,9 +168,9 @@ class pihole::install {
             }
         default:
             { fail("Hiera 'pihole::list' data does not contain array name ${list_name}") }
-      }
+      } # Case
 
-      # Use pihole command to update list
+      # Use pihole command to add the domain to the white/black list
       exec {"${list_name}-${dom}":
         path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
         command => "pihole ${option} '${dom}' --comment 'Managed by Puppet'",
@@ -178,8 +178,9 @@ class pihole::install {
         unless  => "pihole ${option} --list | grep -F '${dom_grep}'",
         notify  => Exec['Update Pihole'],
         require => Exec['Install Pihole'],
-      }
-    }
-  } # For each Hash $list
+      } # Exec
+
+    } # For each domain within the list
+  } # For each Hash list
 
 }
