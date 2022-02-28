@@ -1,0 +1,41 @@
+# pihole data example
+# Module-level defaults
+---
+# Data Merging Options
+# (Over-ride these defaults by using an environment-specific data file)
+lookup_options:
+  pihole::install:
+    merge: hash
+  pihole::setup:
+    merge: hash
+  pihole::ftldns:
+    merge: hash
+  pihole::list:
+    merge: hash
+
+# This is example hiera data used by the module
+pihole::install:
+  repo: 'https://github.com/pi-hole/pi-hole.git'
+  path: 
+    download: '/tmp/pihole'
+    config: '/etc/pihole'
+pihole::setup: # parameters in setupVar.conf to be enforced
+  WEBPASSWORD: '<hash of password>'
+  PIHOLE_INTERFACE: 'eth0' # primary listening interface
+  PIHOLE_DNS_1: '208.67.222.222'
+  PIHOLE_DNS_2: '208.67.220.220'
+  DNSMASQ_LISTENING: 'all' # Allow queries from non-local networks (such as VPNs)
+  REV_SERVER: 'true'       # Convert IPs to hostnames by checking with router
+  REV_SERVER_CIDR: '192.168.0.0/16'
+  REV_SERVER_TARGET: '192.168.1.1'
+  REV_SERVER_DOMAIN: ''
+pihole::ftldns: # parameters in pihole-FTL.conf
+  BLOCKINGMODE: 'NULL' #NULL|IP-NODATA-AAAA|IP|NXDOMAIN¶
+  PRIVACYLEVEL: '0' # Show everything
+  PIHOLE_PTR: 'HOSTNAMEFQDN' # Host's global hostname
+pihole::list:
+  white-wild: # Wildcard whitelist for domain and subdomains
+    - 'collegeboard.org'  # Oscar collegeboard
+    - 'split.io'          # Oscar collegeboard
+  whitelist: # Whitelist domains (no regex)
+    - 'api-2-0.spot.im'   # WSJ comments enable

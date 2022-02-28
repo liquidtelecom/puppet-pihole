@@ -1,5 +1,15 @@
 # Manage custom.list on pihole
 # Uses puppet concat standard library
+#
+# Example export
+#
+# # Local DNS Exported Resource
+# @@concat::fragment {$::fqdn:
+#     target  => '/etc/pihole/custom.list',
+#     content => "${::ipaddress} ${::fqdn}\n",
+#     order   => 10,
+# }
+#
 class pihole::collection{
 
   # File to be assembled from exported fragments created by each node
@@ -8,14 +18,8 @@ class pihole::collection{
     owner   => 'pihole',
     group   => 'pihole',
     mode    => '0644',
-    notify  => Exec['Restart PiHole DNS'],
+    notify  => Exec['Update Pihole'],
     require => Exec['Install Pihole'],
-  }
-  # Restart Pihole DNS after changing file
-  exec {'Restart PiHole DNS':
-    command     => '/bin/bash /usr/local/bin/pihole restartdns',
-    refreshonly => true,
-    returns     => 0,
   }
 
   # Heading for file
@@ -28,7 +32,4 @@ class pihole::collection{
   # Collect the fragments that were generated on each of the nodes
   Concat::Fragment <<| |>>
 
-
-
-## TODO add other hosts that are not managed by puppet, such as ds3
 }
