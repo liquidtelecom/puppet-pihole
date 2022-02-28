@@ -121,22 +121,65 @@ class pihole::install {
   }
 
   # White and Black Listing
-  $phl['white-wild'].each | String $ww | {
+  $phl.each | String $list_name, Array $list_domain | {     # $list_name: pihole white/black list name such as 'white-wild'
+                                                            # $list_domain: array of domain names or regex expressions
 
-    # Form regex version. This is used for the 'unless' match.
-    $ww_escape = regexpescape($ww)
-    # Grep search string to prefix white-wild string.  This is used for the 'unless' match.
-    $wwgrep = "(\.|^)${ww_escape}"
+    $phl[$list_name].each | Integer $index, String $dom | { # $integer: array index
+                                                            # $dom: domain/regex value in array
 
-    # Use pihole command to update list
-    exec {"White Wildcard ${ww}":
-      path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
-      command => "pihole --white-wild '${ww}' --comment 'Managed by Puppet'",
-      user    => 'root',
-      unless  => "pihole --white-wild --list | grep -F '${wwgrep}'",
-      notify  => Exec['Update Pihole'],
-      require => Exec['Install Pihole'],
+      # Form the correct options for the pihole command that updates white/black lists
+      case $list_name { # $list_name: must match array name in pihole::list: yaml data
+        'whitelist':  # Whitelist domain
+            {
+              # Grep search string. This is used for the 'unless' match.
+              $dom_grep = $dom
+              # Pihole command line directive
+              $option = '-w'
+
+            }
+        'blacklist':  # Blacklist domain
+            { fail("NOT IMPLEMENTED '${list_name}'")
+              # Pihole command line directive
+              $option = '--white-wild'
+            }
+        'white-regex':# Whitelist domain as regex
+            { fail("NOT IMPLEMENTED '${list_name}'")
+              # Pihole command line directive
+              $option = '--white-wild'
+            }
+        'white-wild': # Whitelist domain with wildcard subdomains
+            {
+              # Form regex version. This is used for the 'unless' match.
+              $dom_escape = regexpescape($dom)
+              # Grep search string to prefix white-wild string.  This is used for the 'unless' match.
+              $dom_grep = "(\.|^)${dom_escape}"
+              # Pihole command line directive
+              $option = '--white-wild'
+            }
+        'black-regex':# Blacklist domain as regex
+            { fail("NOT IMPLEMENTED '${list_name}'")
+              # Pihole command line directive
+              $option = '--white-wild'
+            }
+        'black-wild': # Blacklist domain with wildcard subdomains
+            { fail("NOT IMPLEMENTED '${list_name}'")
+              # Pihole command line directive
+              $option = '--white-wild'
+            }
+        default:
+            { fail("Hiera 'pihole::list' data does not contain array name ${list_name}") }
+      }
+
+      # Use pihole command to update list
+      exec {"${list_name}-${dom}":
+        path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
+        command => "pihole ${option} '${dom}' --comment 'Managed by Puppet'",
+        user    => 'root',
+        unless  => "pihole ${option} --list | grep -F '${dom_grep}'",
+        notify  => Exec['Update Pihole'],
+        require => Exec['Install Pihole'],
+      }
     }
-  }
+  } # For each Hash $list
 
 }
