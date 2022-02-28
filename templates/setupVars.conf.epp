@@ -10,6 +10,7 @@ CACHE_SIZE=10000
 DNS_BOGUS_PRIV=true
 DNS_FQDN_REQUIRED=true
 DNSMASQ_LISTENING=<%= $phs['dnsmasq_listening'] %>
+DNSSEC=false
 INSTALL_WEB_INTERFACE=<%= $phs['install']['web_interface'] %>
 INSTALL_WEB_SERVER=<%= $phs['install']['web_server'] %>
 IPV4_ADDRESS=<%= $ipv4_address %>
