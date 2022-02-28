@@ -2,9 +2,9 @@
 Hash $phs,
 $ipv4_address
 | -%>
-#
-# File managed by puppet
-#
+#;
+#; File managed by puppet
+#;
 BLOCKING_ENABLED=true
 CACHE_SIZE=10000
 DNS_BOGUS_PRIV=true
