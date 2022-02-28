@@ -9,15 +9,15 @@ BLOCKING_ENABLED=true
 CACHE_SIZE=10000
 DNS_BOGUS_PRIV=true
 DNS_FQDN_REQUIRED=true
-DNSMASQ_LISTENING=<%= $phs['dnsmasq_listening'] %>
+DNSMASQ_LISTENING=<%= $phs['DNSMASQ_LISTENING'] %>
 DNSSEC=false
-INSTALL_WEB_INTERFACE=<%= $phs['install']['web_interface'] %>
-INSTALL_WEB_SERVER=<%= $phs['install']['web_server'] %>
+INSTALL_WEB_INTERFACE=true
+INSTALL_WEB_SERVER=true
 IPV4_ADDRESS=<%= $ipv4_address %>
 IPV6_ADDRESS=
-LIGHTTPD_ENABLED=<%= $phs['lighttpd_enable'] %>
-PIHOLE_DNS_1=<%= $phs['dns']['primary'] %>
-PIHOLE_DNS_2=<%= $phs['dns']['secondary'] %>
-PIHOLE_INTERFACE=<%= $phs['interface'] %>
-QUERY_LOGGING=<%= $phs['query_logging'] %>
-WEBPASSWORD=<%= $phs['webpassword'] %>
+LIGHTTPD_ENABLED=true
+PIHOLE_DNS_1=<%= $phs['PIHOLE_DNS_1'] %>
+PIHOLE_DNS_2=<%= $phs['PIHOLE_DNS_2'] %>
+PIHOLE_INTERFACE=<%= $phs['PIHOLE_INTERFACE'] %>
+QUERY_LOGGING=true
+WEBPASSWORD=<%= $phs['WEBPASSWORD'] %>

@@ -14,6 +14,9 @@ class pihole::install {
   $netmask_cidr = extlib::netmask_to_cidr($::netmask)
   $ipv4_address = "${::ipaddress}/${netmask_cidr}"
 
+  # Configuration Files
+  $setup_vars_conf = "${phi['path']['config']}/setupVars.conf"
+
   # Download pihole
   vcsrepo { $phi['path']['download'] :
     ensure   => present,
@@ -22,7 +25,7 @@ class pihole::install {
     depth    => 1,
   }
 
-  # User and group
+  # Create user and group
   accounts::user { 'pihole':
   uid      => 1998,
   gid      => 1998,
@@ -39,10 +42,10 @@ class pihole::install {
     owner  => 'pihole',
     mode   => '0775',
   }
-  file { 'pihole setupVars' :
+  file { 'preseed setupVars' :
     ensure  => present,
-    replace => false, # Do not overwrite changes
-    path    => "${phi['path']['config']}/setupVars.conf",
+    replace => false, # Do not overwrite changes. Future updates manged by file_line below
+    path    => $setup_vars_conf,
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
@@ -55,6 +58,19 @@ class pihole::install {
     require => File[ $phi['path']['config'] ],
   }
 
+  # Maintain consistent configuration
+  # Enforce setupVars
+  $phs.each | String $k, String $v | {
+    file_line { $k:
+      path               => $setup_vars_conf,
+      line               => "${k}=${v}",
+      multiple           => false, # Should only be one instance of a variable
+      replace            => true,
+      append_on_no_match => true,
+      require            => File[ $phi['path']['config'] ],
+      notify             => Exec['Update Pihole']
+    }
+  }
   # FTLDNS Update pihole-FTL.conf onfiguration file
   $phf.each | String $k, String $v | {
     file_line { $k:
@@ -83,7 +99,7 @@ class pihole::install {
     creates     => '/usr/local/bin/pihole',
     require     => [
         Vcsrepo[ $phi['path']['download'] ],
-        File[ 'pihole setupVars' ],
+        File[ 'preseed setupVars' ],
         ],
   }
 
@@ -92,7 +108,7 @@ class pihole::install {
     path        => ['/bin/', '/usr/bin', '/usr/local/bin/'],
     command     => 'pihole -g',
     user        => 'root',
-    subscribe   => File[ 'pihole setupVars' ],
+    subscribe   => File[ 'preseed setupVars' ],
     refreshonly => true,
   }
 
