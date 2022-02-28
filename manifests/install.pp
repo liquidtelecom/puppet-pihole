@@ -106,14 +106,13 @@ class pihole::install {
 
   # White and Black Listing
   $phl['white-wild'].each | String $ww | {
-    # Form regex version
+
+    # Form regex version. This is used for the 'unless' match.
     $ww_escape = regexpescape($ww)
-    # Grep search string to prefix white-wild string
+    # Grep search string to prefix white-wild string.  This is used for the 'unless' match.
     $wwgrep = "(\.|^)${ww_escape}"
 
-notify{$ww_escape:}
-notify{$wwgrep:}
-
+    # Use pihole command to update list
     exec {"White Wildcard ${ww}":
       path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
       command => "pihole --white-wild '${ww}' --comment 'Managed by Puppet'",
