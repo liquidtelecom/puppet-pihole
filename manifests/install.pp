@@ -56,6 +56,7 @@ class pihole::install {
         }
       ),
     require => File[ $phi['path']['config'] ],
+    notify  => Exec['Update Pihole']
   }
 
   # Maintain consistent configuration
@@ -77,6 +78,7 @@ class pihole::install {
     file_line { $k:
       path               => "${phi['path']['config']}/pihole-FTL.conf",
       line               => "${k}=${v}",
+      match              => "^${k}",
       multiple           => false, # Should only be one instance of a variable
       replace            => true,
       append_on_no_match => true,
