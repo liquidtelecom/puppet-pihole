@@ -46,7 +46,7 @@ class pihole::collection{
   $phc.each | String $domain, String $ip | {
     concat::fragment {$domain:
         target  => '/etc/pihole/custom.list',
-        content => "${domain} ${ip}\n",
+        content => "${ip} ${domain}\n",
         order   => 30,
     }
   }
