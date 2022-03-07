@@ -12,6 +12,10 @@
 #
 class pihole::collection{
 
+  # Variables
+  $phc = lookup('pihole::custom_list')       # Custom.List domains to add to dns
+#TODO: improve lookup function with default empty hash
+
   # File to be assembled from exported fragments created by each node
   concat {'/etc/pihole/custom.list':
     ensure  => present,
@@ -31,5 +35,20 @@ class pihole::collection{
 
   # Collect the fragments that were generated on each of the nodes
   Concat::Fragment <<| |>>
+
+  # Custom DNS Entries for custom.list that are defined in yaml
+  concat::fragment {'Custom':
+      target  => '/etc/pihole/custom.list',
+      content => "### Custom DNS Entries from Yaml file\n",
+      order   => 20,
+  }
+
+  $phc.each | String $domain, String $ip | {
+    concat::fragment {$domain:
+        target  => '/etc/pihole/custom.list',
+        content => "${domain} ${ip}\n",
+        order   => 30,
+    }
+  }
 
 }
