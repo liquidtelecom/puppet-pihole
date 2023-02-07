@@ -78,7 +78,7 @@ class pihole::install {
     file_line { $k:
       path               => "${phi['path']['config']}/pihole-FTL.conf",
       line               => "${k}=${v}",
-      match              => "^${k}",
+      match              => "^${k}=",
       multiple           => false, # Should only be one instance of a variable
       replace            => true,
       append_on_no_match => true,
@@ -187,7 +187,7 @@ class pihole::install {
 
   $urls.each | String $url | {
     # $url is the title of the resource
-      exec { "${list_name}-${url}":
+      exec { "adlist-${url}":
         path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
         command => "pihole -a adlist add '${url}' 'Managed by Puppet'",
         user    => 'root',
