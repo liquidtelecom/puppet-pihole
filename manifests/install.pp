@@ -24,6 +24,7 @@ class pihole::install {
 
   # Create user and group
   users::account { 'pihole':
+  username => "pihole",
   uid      => 3802,
   groups   => ['www-data'],
   shell    => '/usr/sbin/nologin',
