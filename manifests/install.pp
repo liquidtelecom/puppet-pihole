@@ -191,7 +191,7 @@ class pihole::install {
         path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
         command => "pihole -a adlist add '${url}' 'Managed by Puppet'",
         user    => 'root',
-        unless  => "pihole-FTL sqlite3 '/etc/pihole/gravity.db' \"SELECT * from adlist WHERE address = '${url}'\"",
+        unless  => "pihole-FTL sqlite3 '/etc/pihole/gravity.db' \"SELECT * from adlist WHERE address = '${url}'\" | grep '|'",
         notify  => Exec['Update Pihole'],
         require => Exec['Install Pihole'],
       } # Exec
