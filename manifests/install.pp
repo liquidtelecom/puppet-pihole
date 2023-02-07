@@ -189,11 +189,11 @@ class pihole::install {
 
   $urls.each | String $url | {
     # $url is the title of the resource
-      exec {"${list_name}-${url}":
+      exec { "${list_name}-${url}":
         path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
         command => "pihole -a adlist add '${url}' 'Managed by Puppet'",
         user    => 'root',
-        unless  => "pihole-FTL sqlite3 "/etc/pihole/gravity.db" "SELECT * from adlist WHERE address = '${url}'",
+        unless  => "pihole-FTL sqlite3 '/etc/pihole/gravity.db' \"SELECT * from adlist WHERE address = '${url}'\"",
         notify  => Exec['Update Pihole'],
         require => Exec['Install Pihole'],
       } # Exec
