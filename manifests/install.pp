@@ -8,11 +8,8 @@ class pihole::install {
   $phs = lookup('pihole::setup')      # Setup variables
   $phf = lookup('pihole::ftldns')     # FTLDNS configuration
   $phl = lookup('pihole::list')       # White- and black-lists
+  $urls = lookup('pihole::adlists')       # White- and black-lists
 
-
-  # Network Interface
-  $netmask_cidr = extlib::netmask_to_cidr($::netmask)
-  $ipv4_address = "${::ipaddress}/${netmask_cidr}"
 
   # Configuration Files
   $setup_vars_conf = "${phi['path']['config']}/setupVars.conf"
@@ -27,12 +24,18 @@ class pihole::install {
 
   # Create user and group
   accounts::user { 'pihole':
-  uid      => 1998,
-  gid      => 1998,
+  uid      => 3802,
+  gid      => 3802,
   groups   => ['www-data'],
   password => '!!',
   system   => true,
   shell    => '/usr/sbin/nologin',
+  }
+
+  #Sudoers entry for pihole web
+  sudo::directive { 'pihole':
+    ensure  => present,
+    content => "www-data ALL=NOPASSWD: /usr/local/bin/pihole\n",
   }
 
   # Pre-seed variables for unattended install
@@ -52,7 +55,6 @@ class pihole::install {
     content => epp('pihole/setupVars.conf.epp',
         {
         'phs'          => $phs,
-        'ipv4_address' => $ipv4_address,
         }
       ),
     require => File[ $phi['path']['config'] ],
@@ -184,5 +186,17 @@ class pihole::install {
 
     } # For each domain within the list
   } # For each Hash list
+
+  $urls.each | String $url | {
+    # $url is the title of the resource
+      exec {"${list_name}-${url}":
+        path    => ['/bin/', '/usr/bin', '/usr/local/bin/'],
+        command => "pihole -a adlist add '${url}' 'Managed by Puppet'",
+        user    => 'root',
+        unless  => "pihole-FTL sqlite3 "/etc/pihole/gravity.db" "SELECT * from adlist WHERE address = '${url}'",
+        notify  => Exec['Update Pihole'],
+        require => Exec['Install Pihole'],
+      } # Exec
+  }
 
 }

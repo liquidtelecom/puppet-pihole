@@ -1,6 +1,8 @@
 # Puppet module to install and configure pihole
+To install and manage basic PiHole config including Sudoers entry and other key system parameters
 
-The development repository is located at: <https://gitlab.jaroker.org>.  A mirror repository is pushed to: <https://github.com/jjarokergc/puppet-pihole> for public access.
+Forked from: <https://github.com/jjarokergc/puppet-pihole>, 
+also pulled in some ideas from <https://github.com/masrur/pihole-puppet>
 
 ## Installation
 

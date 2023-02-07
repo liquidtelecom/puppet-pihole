@@ -1,27 +1,26 @@
 <%- |  
-Hash $phs,
-$ipv4_address
+Hash $phs
 | -%>
 #;
 #; File managed by puppet
 #;
 BLOCKING_ENABLED=true
 CACHE_SIZE=10000
-DNS_BOGUS_PRIV=true
-DNS_FQDN_REQUIRED=true
+DNS_BOGUS_PRIV=<%= $phs['DNS_BOGUS_PRIV'] %>
+DNS_FQDN_REQUIRED=<%= $phs['DNS_FQDN_REQUIRED'] %>
 DNSMASQ_LISTENING=<%= $phs['DNSMASQ_LISTENING'] %>
 DNSSEC=false
 INSTALL_WEB_INTERFACE=true
 INSTALL_WEB_SERVER=true
-IPV4_ADDRESS=<%= $ipv4_address %>
-IPV6_ADDRESS=
 LIGHTTPD_ENABLED=true
 PIHOLE_DNS_1=<%= $phs['PIHOLE_DNS_1'] %>
 PIHOLE_DNS_2=<%= $phs['PIHOLE_DNS_2'] %>
 PIHOLE_INTERFACE=<%= $phs['PIHOLE_INTERFACE'] %>
 QUERY_LOGGING=true
 REV_SERVER=<%= $phs['REV_SERVER'] %>
+<% if $phs['REV_SERVER'] == 'true' -%>
 REV_SERVER_CIDR=<%= $phs['REV_SERVER_CIDR'] %>
 REV_SERVER_TARGET=<%= $phs['REV_SERVER_TARGET'] %>
 REV_SERVER_DOMAIN=<%= $phs['REV_SERVER_DOMAIN'] %>
+<% end -%>
 WEBPASSWORD=<%= $phs['WEBPASSWORD'] %>
