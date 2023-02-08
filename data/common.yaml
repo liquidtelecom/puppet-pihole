@@ -69,6 +69,7 @@ pihole::list:
     - 'googleapis.l.google.com'
     - 's3.amazonaws.com'
     - 'ransomwaretracker.abuse.ch'
+    - 'self.events.data.microsoft.com'
 adblock::adlist: '/etc/pihole/adlists.list'
 pihole::adlists:
     - 'https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts'
